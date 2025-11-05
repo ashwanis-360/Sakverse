@@ -8,7 +8,7 @@ services:
     image: mysql:8.0
     container_name: db-init
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_ROOT_PASSWORD=Z#8vM^3qR@m9Yc!q
       - MYSQL_DATABASE=authservice
     volumes:
       - ./sakverse_schema.sql:/docker-entrypoint-initdb.d/sakverse_schema.sql:ro
@@ -32,7 +32,7 @@ services:
       # --- Database Configuration ---
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/authservice
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_PASSWORD: Z#8vM^3qR@m9Yc!q
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_SHOW_SQL: true
@@ -73,7 +73,7 @@ services:
       KNOWLEDGE_DATA_DIR: "/mnt/Knowledge_Data"
       DB_host: "host.docker.internal"
       DB_user: "root"
-      DB_password: "admin"
+      DB_password: "Z#8vM^3qR@m9Yc!q"
       DB_database: "authservice"
       DB_port: "3306"
       SECRET_KEY: "mySecretKeymySecretKeymySecretKeymySecretKey"
@@ -112,7 +112,7 @@ services:
       # Database details (for host-installed DB)
       host: "host.docker.internal"
       user: "root"
-      password: "admin"
+      password: "Z#8vM^3qR@m9Yc!q"
       database: "tcg"
       port: "3306"
     extra_hosts:
