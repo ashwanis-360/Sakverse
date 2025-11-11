@@ -25,6 +25,7 @@ services:
   auth:
     image: sakverse/authservice:latest
     container_name: auth-service
+    pull_policy: always
     ports:
       - "8090:8090"
     restart: unless-stopped
@@ -68,6 +69,7 @@ services:
   knowledgemaster:
     image: sakverse/knowledgemaster:latest
     container_name: knowledgemaster
+    pull_policy: always
     ports:
       - "4444:4444"
     restart: unless-stopped
@@ -100,6 +102,7 @@ services:
   # -----------------------------
   tcg:
     image: sakverse/tcg:latest
+    pull_policy: always
     container_name: tcg
     ports:
       - "8000:8000"
@@ -134,6 +137,7 @@ services:
   # -----------------------------
   node-proxy-backend:
     image: sakverse/backendserver:latest
+    pull_policy: always
     container_name: node-backend-service
     ports:
       - "3000:3000"
@@ -160,6 +164,7 @@ services:
   # -----------------------------
   work-main:
     image: sakverse/frontend:latest
+    pull_policy: always
     container_name: work-main-service
     ports:
       - "5175:5175"
