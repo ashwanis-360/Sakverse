@@ -1,26 +1,9 @@
 version: '3.9'
 
 services:
-  # -----------------------------
-  # 1️⃣ MySQL initialization (Optional)
-  # -----------------------------
-  db-init:
-    image: mysql:8.0
-    container_name: db-init
-    environment:
-      - MYSQL_ROOT_PASSWORD=Z#8vM^3qR@m9Yc!q
-      - MYSQL_DATABASE=authservice
-    volumes:
-      - ./sakverse_schema.sql:/docker-entrypoint-initdb.d/sakverse_schema.sql:ro
-    command: >
-      bash -c "echo 'Initializing DB...' &&
-               sleep 5 &&
-               mysql -h host.docker.internal -u root -pZ#8vM^3qR@m9Yc!q < /docker-entrypoint-initdb.d/sakverse_schema.sql"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  # -----------------------------
-  # 2️⃣ Auth Service (Spring Boot)
+ 
+ # -----------------------------
+ # 2️⃣ Auth Service (Spring Boot)
   # -----------------------------
   auth:
     image: sakverse/authservice:latest
@@ -32,10 +15,16 @@ services:
       # --- Database Configuration ---
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/authservice
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Z#8vM^3qR@m9Yc!q
+      SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_SHOW_SQL: true
+
+      # --- File Upload Configuration ---
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 200MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 200MB
+      SERVER_TOMCAT_MAX_HTTP_POST_SIZE: 209715200   # in bytes (200MB)
+      SERVER_TOMCAT_MAX_SWALLOW_SIZE: 209715200
 
       # --- Application Settings ---
       JWT_SECRET: mySecretKeymySecretKeymySecretKeymySecretKey
@@ -73,7 +62,7 @@ services:
       KNOWLEDGE_DATA_DIR: "/mnt/Knowledge_Data"
       DB_host: "host.docker.internal"
       DB_user: "root"
-      DB_password: "Z#8vM^3qR@m9Yc!q"
+      DB_password: "admin"
       DB_database: "authservice"
       DB_port: "3306"
       SECRET_KEY: "mySecretKeymySecretKeymySecretKeymySecretKey"
@@ -112,7 +101,7 @@ services:
       # Database details (for host-installed DB)
       host: "host.docker.internal"
       user: "root"
-      password: "Z#8vM^3qR@m9Yc!q"
+      password: "admin"
       database: "tcg"
       port: "3306"
     extra_hosts:

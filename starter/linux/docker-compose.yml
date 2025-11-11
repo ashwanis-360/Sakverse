@@ -80,7 +80,7 @@ services:
       ALGORITHM: "HS256"
     volumes:
       - /home/ubuntu/Knowledge_Data:/mnt/Knowledge_Data
-      - ./chroma_storage:/app/chroma_storage
+      - /home/ubuntu/chroma_storage:/app/chroma_storage
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
