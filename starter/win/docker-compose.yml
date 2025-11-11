@@ -37,6 +37,12 @@ services:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_SHOW_SQL: true
 
+      # --- File Upload Configuration ---
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 200MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 200MB
+      SERVER_TOMCAT_MAX_HTTP_POST_SIZE: 209715200   # in bytes (200MB)
+      SERVER_TOMCAT_MAX_SWALLOW_SIZE: 209715200
+
       # --- Application Settings ---
       JWT_SECRET: mySecretKeymySecretKeymySecretKeymySecretKey
       JWT_EXPIRATION: 86400000
