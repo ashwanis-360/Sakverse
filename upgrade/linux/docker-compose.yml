@@ -16,7 +16,7 @@ services:
       # --- Database Configuration ---
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/authservice
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_PASSWORD: Z#8vM^3qR@m9Yc!q
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_SHOW_SQL: true
@@ -64,7 +64,7 @@ services:
       KNOWLEDGE_DATA_DIR: "/mnt/Knowledge_Data"
       DB_host: "host.docker.internal"
       DB_user: "root"
-      DB_password: "admin"
+      DB_password: "Z#8vM^3qR@m9Yc!q"
       DB_database: "authservice"
       DB_port: "3306"
       SECRET_KEY: "mySecretKeymySecretKeymySecretKeymySecretKey"
@@ -104,13 +104,70 @@ services:
       # Database details (for host-installed DB)
       host: "host.docker.internal"
       user: "root"
-      password: "admin"
+      password: "Z#8vM^3qR@m9Yc!q"
       database: "tcg"
       port: "3306"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # -----------------------------
+  # 4️⃣ UNITE (Python)
+  # -----------------------------
+  unit:
+    image: sakverse/unite:latest
+    pull_policy: always
+    container_name: unite
+    ports:
+      - "6666:6666"
+    restart: unless-stopped
+    depends_on:
+      - tcg
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock   # ✅ FIX
+    environment:
+      LLM_MODEL: "gpt-oss:20b-cloud"
+      OLLAMA_BASE_URL: "http://10.154.2.98:11434"
+      HEADLESS: true
+      SCREENSHOT_DIR: "screenshots"
+      MAX_DOM_CHARS: "80000000"
+      # Database details (for host-installed DB)
+      host: "host.docker.internal"
+      user: "root"
+      password: "admin"
+      database: "automation"
+      port: "3306"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6666/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # -----------------------------
+  # 4️⃣ TDM (Python)
+  # -----------------------------
+  tdm:
+    image: sakverse/tdm:latest
+    pull_policy: always
+    container_name: tdm
+    ports:
+      - "5555:5555"
+    restart: unless-stopped
+    depends_on:
+      - tcg
+    environment:
+      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:admin@10.154.2.74:3306/tdm"
+      
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6666/actuator/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
