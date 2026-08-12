@@ -145,17 +145,18 @@ services:
     depends_on:
       - tcg
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock   # ✅ FIX
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       LLM_MODEL: "gpt-oss:20b-cloud"
-      OLLAMA_BASE_URL: "http://10.154.2.98:11434"
+      OLLAMA_BASE_URL: "https://ollama.com/"
+      OLLAMA_API_KEY: "34dddee663334380b55448af3f586b78.j4IPZ-9emQRkfOHxFPkWSuCA"
       HEADLESS: true
       SCREENSHOT_DIR: "screenshots"
       MAX_DOM_CHARS: "80000000"
       # Database details (for host-installed DB)
       host: "host.docker.internal"
       user: "root"
-      password: "admin"
+      password: "Z#8vM^3qR@m9Yc!q"
       database: "automation"
       port: "3306"
     extra_hosts:
@@ -179,7 +180,7 @@ services:
     depends_on:
       - tcg
     environment:
-      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:admin@10.154.2.74:3306/tdm"
+      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:admin@host.docker.internal:3306/tdm"
       
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -207,6 +208,7 @@ services:
       PORT: "3000"
       BASE_IP: "http://tcg:8000"
       JAVA_IP: "http://auth:8090"
+      NGROK_URL: "http://host.docker.internal:6666"
       NODE_ENV: "production"
       FRONTEND_URL: "https://tcg.saksoft.com"
       FRONTEND_PORT: "5175"
