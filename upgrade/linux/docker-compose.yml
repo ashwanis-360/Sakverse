@@ -129,6 +129,7 @@ services:
       - tcg
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /home/ubuntu/TestData:/testdata
     environment:
       LLM_MODEL: "gpt-oss:20b-cloud"
       OLLAMA_BASE_URL: "https://ollama.com/"
@@ -139,7 +140,7 @@ services:
       # Database details (for host-installed DB)
       host: "host.docker.internal"
       user: "root"
-      password: "Z#8vM^3qR@m9Yc!q"
+      password: "Z%238vM%5E3qR%40m9Yc%21q"
       database: "automation"
       port: "3306"
     extra_hosts:
@@ -189,8 +190,8 @@ services:
       PORT: "3000"
       BASE_IP: "http://tcg:8000"
       JAVA_IP: "http://auth:8090"
-      NGROK_URL: "http://host.docker.internal:6666"
-      TDMIP: "http://host.docker.internal:5555"
+      NGROK_URL: "http://unit:6666"
+      TDMIP: "http://tdm:5555"
       NODE_ENV: "production"
       FRONTEND_URL: "https://tcg.saksoft.com"
       FRONTEND_PORT: "5175"
