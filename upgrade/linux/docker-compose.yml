@@ -163,7 +163,7 @@ services:
     depends_on:
       - tcg
     environment:
-      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:admin@host.docker.internal:3306/tdm"
+      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:Z%238vM%5E3qR%40m9Yc%21q@host.docker.internal:3306/tdm"
       
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -178,7 +178,6 @@ services:
   # -----------------------------
   node-proxy-backend:
     image: sakverse/backendserver:latest
-    pull_policy: always
     container_name: node-backend-service
     ports:
       - "3000:3000"
@@ -191,6 +190,7 @@ services:
       BASE_IP: "http://tcg:8000"
       JAVA_IP: "http://auth:8090"
       NGROK_URL: "http://host.docker.internal:6666"
+      TDMIP: "http://host.docker.internal:5555"
       NODE_ENV: "production"
       FRONTEND_URL: "https://tcg.saksoft.com"
       FRONTEND_PORT: "5175"
