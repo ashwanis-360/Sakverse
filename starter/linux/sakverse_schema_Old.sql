@@ -1,229 +1,27 @@
--- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
---
--- Host: localhost    Database: automation
--- ------------------------------------------------------
--- Server version	8.0.46
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `execution_steps`
---
-
-DROP TABLE IF EXISTS `execution_steps`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `execution_steps` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `planned_intent_id` int NOT NULL,
-  `action` longtext NOT NULL,
-  `target` longtext,
-  `value` longtext,
-  `execution_status` mediumtext NOT NULL,
-  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `error_details` longtext,
-  `screenshot` longtext,
-  `execution_run_id` longtext,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `idx_execution_planned_id` (`planned_intent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18545 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `original_intent`
---
-
-DROP TABLE IF EXISTS `original_intent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `original_intent` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `intent` longtext NOT NULL,
-  `created_by` varchar(45) NOT NULL,
-  `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `automated` mediumtext NOT NULL,
-  `testcase_id` int NOT NULL,
-  `version` varchar(45) DEFAULT NULL,
-  `project_id` int DEFAULT NULL,
-  `user_story_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `idx_original_testcase_id` (`testcase_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=390 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `planned_intent`
---
-
-DROP TABLE IF EXISTS `planned_intent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `planned_intent` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_intent_id` int NOT NULL,
-  `step_type` longtext NOT NULL,
-  `intent` longtext NOT NULL,
-  `target` longtext NOT NULL,
-  `value` longtext,
-  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` varchar(45) NOT NULL,
-  `updated_by` varchar(45) NOT NULL,
-  `execution_status` mediumtext NOT NULL,
-  `execution_order` int NOT NULL,
-  `enabled` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21377 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `suite_execution`
---
-
-DROP TABLE IF EXISTS `suite_execution`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `suite_execution` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `suite_id` bigint NOT NULL,
-  `batch_session_id` varchar(100) NOT NULL,
-  `status` varchar(30) NOT NULL DEFAULT 'RECEIVED',
-  `total_testcases` int NOT NULL DEFAULT '0',
-  `started_at` timestamp NULL DEFAULT NULL,
-  `completed_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_batch_session_id` (`batch_session_id`),
-  KEY `idx_suite_execution_suite` (`suite_id`),
-  KEY `idx_suite_execution_status` (`status`),
-  CONSTRAINT `fk_suite_execution_suite` FOREIGN KEY (`suite_id`) REFERENCES `test_suite` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `suite_execution_step`
---
-
-DROP TABLE IF EXISTS `suite_execution_step`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `suite_execution_step` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `batch_session_id` varchar(100) NOT NULL,
-  `execution_id` bigint NOT NULL,
-  `session_id` varchar(100) NOT NULL,
-  `data_row_id` int NOT NULL,
-  `planned_intent_id` bigint DEFAULT NULL,
-  `action` varchar(100) DEFAULT NULL,
-  `target` text,
-  `value` text,
-  `status` varchar(30) NOT NULL,
-  `screenshot` longtext,
-  `log_error` longtext,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_batch_session` (`batch_session_id`),
-  KEY `idx_execution` (`execution_id`),
-  KEY `idx_session` (`session_id`),
-  KEY `idx_data_row` (`execution_id`,`data_row_id`),
-  KEY `idx_planned_intent` (`planned_intent_id`),
-  KEY `idx_batch_execution_row` (`batch_session_id`,`execution_id`,`data_row_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2461 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `test_suite`
---
-
-DROP TABLE IF EXISTS `test_suite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `test_suite` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `suite_name` varchar(200) NOT NULL,
-  `description` text,
-  `status` varchar(30) NOT NULL DEFAULT 'ACTIVE',
-  `created_by` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `project_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_suite_name` (`suite_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `test_suite_item`
---
-
-DROP TABLE IF EXISTS `test_suite_item`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `test_suite_item` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `suite_id` bigint NOT NULL,
-  `execution_id` bigint NOT NULL,
-  `data_row_id` int NOT NULL,
-  `execution_order` int NOT NULL DEFAULT '1',
-  `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_suite_id` (`suite_id`),
-  KEY `idx_suite_execution` (`suite_id`,`execution_id`),
-  KEY `idx_suite_order` (`suite_id`,`execution_order`),
-  CONSTRAINT `fk_suite_item_suite` FOREIGN KEY (`suite_id`) REFERENCES `test_suite` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping events for database 'automation'
---
-
---
--- Dumping routines for database 'automation'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-08-20 14:09:16
--- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
 -- Host: localhost    Database: authservice
 -- ------------------------------------------------------
--- Server version	8.0.46
+-- Server version	8.0.43
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `authservice`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `authservice` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `authservice`;
 
 --
 -- Table structure for table `integration_credentials`
@@ -246,7 +44,7 @@ CREATE TABLE `integration_credentials` (
   CONSTRAINT `FKeve3lvcgdtupnyqqbc74he7eb` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`),
   CONSTRAINT `FKkbw120dvxqh93y9i3op9v9fy2` FOREIGN KEY (`integration_id`) REFERENCES `integrations` (`id`),
   CONSTRAINT `FKq3n522ni58dbn5gooxqkx8jgp` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=317 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=241 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -267,7 +65,7 @@ CREATE TABLE `integrations` (
   PRIMARY KEY (`id`),
   KEY `FKlcbes67hycby4j22eq3ukbmun` (`project_id`),
   CONSTRAINT `FKlcbes67hycby4j22eq3ukbmun` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=171 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -292,6 +90,16 @@ CREATE TABLE `permissions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `permissions`
+--
+
+LOCK TABLES `permissions` WRITE;
+/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+INSERT INTO `permissions` VALUES (1,1,1,1,1,NULL,NULL),(2,2,1,1,1,NULL,NULL),(3,3,1,1,1,NULL,NULL),(4,4,1,1,1,NULL,NULL),(5,5,1,1,1,NULL,NULL);
+/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `project`
 --
 
@@ -310,7 +118,7 @@ CREATE TABLE `project` (
   `linked` tinyint DEFAULT NULL,
   `llm_model` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -333,7 +141,7 @@ CREATE TABLE `project_assignment` (
   CONSTRAINT `c1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `c2` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`),
   CONSTRAINT `c3` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,6 +163,17 @@ CREATE TABLE `role` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES (1,'Admin',NULL,NULL,NULL,0),(2,'Manual Tester',NULL,NULL,NULL,0),(3,'Automation Tester',NULL,NULL,NULL,0),(4,'SDET',NULL,NULL,NULL,0),(5,'Data Analyst',NULL,NULL,NULL,0);
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
 -- Table structure for table `user`
 --
 
@@ -373,144 +192,27 @@ CREATE TABLE `user` (
   `api_key` longtext,
   `llm_key` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping events for database 'authservice'
+-- Dumping data for table `user`
 --
 
---
--- Dumping routines for database 'authservice'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-08-20 14:09:16
--- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
---
--- Host: localhost    Database: tdm
--- ------------------------------------------------------
--- Server version	8.0.46
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO authservice.user (user_id,username, password, role, enabled, user_display_name)
+VALUES (2,'admin', '$2a$12$U1BiFINvLOorRYhm7MuT/.aenz6K.1Iayrd194/2T1mUzj.XjvLLG', 1, 1, 'Admin');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Table structure for table `data`
+-- Current Database: `tcg`
 --
 
-DROP TABLE IF EXISTS `data`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `data` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `table_id` int DEFAULT NULL,
-  `data` blob,
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=562 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `tcg` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
---
--- Table structure for table `repository`
---
-
-DROP TABLE IF EXISTS `repository`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `repository` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) DEFAULT NULL,
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `table`
---
-
-DROP TABLE IF EXISTS `table`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `table` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `repo_id` int DEFAULT NULL,
-  `table_name` varchar(45) DEFAULT NULL,
-  `created` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `schema` json DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=490 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `table_view`
---
-
-DROP TABLE IF EXISTS `table_view`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `table_view` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `table_view` longtext,
-  `table_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping events for database 'tdm'
---
-
---
--- Dumping routines for database 'tdm'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-08-20 14:09:16
--- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
---
--- Host: localhost    Database: tcg
--- ------------------------------------------------------
--- Server version	8.0.46
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+USE `tcg`;
 
 --
 -- Table structure for table `com_log`
@@ -546,7 +248,7 @@ CREATE TABLE `feature_idea` (
   `approach` json DEFAULT NULL,
   `idea_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=177 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -565,7 +267,7 @@ CREATE TABLE `ideated_user_story` (
   `acceptance_criteria` json DEFAULT NULL,
   `feature_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1894 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=784 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -581,9 +283,8 @@ CREATE TABLE `intial_idea` (
   `executive_summary` longtext,
   `business_objectives` longtext,
   `status` varchar(45) DEFAULT NULL,
-  `project_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=152 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -602,7 +303,7 @@ CREATE TABLE `planning_item` (
   `updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
   UNIQUE KEY `_id_UNIQUE` (`_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5677 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4458 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -639,7 +340,7 @@ CREATE TABLE `qna` (
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `knowledge_exist` tinyint DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16930 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12925 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -670,7 +371,7 @@ CREATE TABLE `requirments` (
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4151 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3632 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -729,7 +430,7 @@ CREATE TABLE `story_details` (
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=655 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=547 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -774,7 +475,7 @@ CREATE TABLE `test_cases` (
   `tobeautomate` tinyint DEFAULT '0',
   `regression` tinyint DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38219 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32647 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -797,16 +498,8 @@ CREATE TABLE `userstory` (
   `Error_details` longtext,
   `autopilot` tinyint DEFAULT NULL,
   PRIMARY KEY (`_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1135 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=968 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping events for database 'tcg'
---
-
---
--- Dumping routines for database 'tcg'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -817,4 +510,206 @@ CREATE TABLE `userstory` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-20 14:09:17
+--
+-- Current Database: `tdm`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `tdm` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `tdm`;
+
+--
+-- Table structure for table `data`
+--
+
+DROP TABLE IF EXISTS `data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `data` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `table_id` int DEFAULT NULL,
+  `data` blob,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=304 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `repository`
+--
+
+DROP TABLE IF EXISTS `repository`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `repository` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `table`
+--
+
+DROP TABLE IF EXISTS `table`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `table` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `repo_id` int DEFAULT NULL,
+  `table_name` varchar(45) DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `schema` json DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `table_view`
+--
+
+DROP TABLE IF EXISTS `table_view`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `table_view` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `table_view` longtext,
+  `table_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Current Database: `automation`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `automation` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `automation`;
+
+--
+-- Table structure for table `execution_cycle`
+--
+
+DROP TABLE IF EXISTS `execution_cycle`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `execution_cycle` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `suite_id` int NOT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `completed` datetime DEFAULT CURRENT_TIMESTAMP,
+  `status` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `execution_steps`
+--
+
+DROP TABLE IF EXISTS `execution_steps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `execution_steps` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `planned_intent_id` int NOT NULL,
+  `action` longtext NOT NULL,
+  `target` longtext,
+  `value` longtext,
+  `execution_status` mediumtext NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `error_details` longtext,
+  `screenshot` longtext,
+  `session_id` longtext,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `idx_execution_planned_id` (`planned_intent_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13665 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `original_intent`
+--
+
+DROP TABLE IF EXISTS `original_intent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `original_intent` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `intent` longtext NOT NULL,
+  `created_by` varchar(45) NOT NULL,
+  `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `automated` mediumtext NOT NULL,
+  `testcase_id` int NOT NULL,
+  `version` varchar(45) DEFAULT NULL,
+  `project_id` int DEFAULT NULL,
+  `user_story_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `idx_original_testcase_id` (`testcase_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=323 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `planned_intent`
+--
+
+DROP TABLE IF EXISTS `planned_intent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `planned_intent` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_intent_id` int NOT NULL,
+  `step_type` longtext NOT NULL,
+  `intent` longtext NOT NULL,
+  `target` longtext NOT NULL,
+  `value` longtext,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` varchar(45) NOT NULL,
+  `updated_by` varchar(45) NOT NULL,
+  `execution_status` mediumtext NOT NULL,
+  `execution_order` int NOT NULL,
+  `enabled` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16430 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `suite_name`
+--
+
+DROP TABLE IF EXISTS `suite_name`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `suite_name` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `list_of_tests` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
