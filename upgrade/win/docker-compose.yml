@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     environment:
       # --- Database Configuration ---
-      SPRING_DATASOURCE_URL: jdbc:mysql://10.154.2.70:3306/authservice
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/authservice
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
@@ -62,7 +62,7 @@ services:
       AUTH_URL: "http://auth:8090"
       CHROMA_DIR: "/app/chroma_storage"
       KNOWLEDGE_DATA_DIR: "/mnt/Knowledge_Data"
-      DB_host: "10.154.2.70"
+      DB_host: "host.docker.internal"
       DB_user: "root"
       DB_password: "admin"
       DB_database: "authservice"
@@ -102,7 +102,7 @@ services:
       ALGORITHM: "HS256"
 
       # Database details (for host-installed DB)
-      host: "10.154.2.70"
+      host: "host.docker.internal"
       user: "root"
       password: "admin"
       database: "tcg"
@@ -137,7 +137,7 @@ services:
       SCREENSHOT_DIR: "screenshots"
       MAX_DOM_CHARS: "80000000"
       # Database details (for host-installed DB)
-      host: "10.154.2.70"
+      host: "host.docker.internal"
       user: "root"
       password: "admin"
       database: "automation"
@@ -163,7 +163,7 @@ services:
     depends_on:
       - tcg
     environment:
-      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:admin@10.154.2.70:3306/tdm"
+      SQLALCHEMY_DATABASE_URI: "mysql+mysqlconnector://root:admin@host.docker.internal:3306/tdm"
       
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -192,8 +192,8 @@ services:
       JAVA_IP: "http://auth:8090"
       NODE_ENV: "production"
       FRONTEND_URL: "https://tcg.saksoft.com"
-      NGROK_URL: "http://10.154.2.70:6666"
-      TDMIP: "http://10.154.2.70:5555"
+      NGROK_URL: "http://unit:6666"
+      TDMIP: "http://tdm:5555"
       FRONTEND_PORT: "5175"
       HOST: "https://tcg.saksoft.com"
     healthcheck:
